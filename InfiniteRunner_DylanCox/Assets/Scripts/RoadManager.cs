@@ -37,7 +37,7 @@ public class RoadManager : MonoBehaviour {
 
 		// Move road to pass first piece 
 		float halfLength = (RoadPieces [0].transform.FindChild ("BeginLeft").position -
-		                   RoadPieces [0].transform.FindChild ("EndLeft").position).magnitude / 2;
+			RoadPieces [0].transform.FindChild ("EndLeft").position).magnitude / 2;
 		RoadPieces[1].transform.Translate (0f, 0f, -halfLength, Space.World); 
 
 		// Get corner markers of current piece 
@@ -45,14 +45,31 @@ public class RoadManager : MonoBehaviour {
 		BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
 		EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
 		EndRight = RoadPieces[1].transform.FindChild("EndRight");
-
-
 	}
 
 	// Update is called once per frame
 	void Update () {
 		RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
 		//RoadPieces [1].transform.Rotate (0f, 20f * Time.deltaTime, 0f, Space.World);
+
+		// Delete piece behind player and add to road; move Parents / Children up
+
+		if (EndLeft.position.z < 0f || EndRight.position.z < 0f) {
+			Destroy (RoadPieces [0]);
+			RoadPieces.RemoveAt (0);
+			AddPiece ();
+
+			for (int i = RoadPieces.Count - 1; i >= 0; i--) {
+				RoadPieces [i].transform.parent = null; 
+				RoadPieces [i].transform.parent = RoadPieces[1].transform;
+			}
+
+			// Get new references for coners of current piece 
+			BeginLeft = RoadPieces[1].transform.FindChild("BeginLeft");
+			BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
+			EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
+			EndRight = RoadPieces[1].transform.FindChild("EndRight");
+		}
 	}
 
 	void AddPiece() {
