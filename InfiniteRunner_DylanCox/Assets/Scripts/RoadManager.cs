@@ -10,6 +10,8 @@ public class RoadManager : MonoBehaviour {
 
 	Transform BeginLeft, BeginRight, EndLeft, EndRight;
 
+	Vector3 RotationPoint = Vector3.zero;
+
 	[SerializeField]
 	int numPieces = 10; 
 
@@ -28,6 +30,9 @@ public class RoadManager : MonoBehaviour {
 		RoadPieces.Add(Instantiate(Resources.Load("RoadPieces/" + firstPieceFilename)) as GameObject);
 		RoadPieces.Add(Instantiate(Resources.Load("RoadPieces/" + firstPieceFilename)) as GameObject);
 
+		Vector3 Displacement = RoadPieces[0].transform.FindChild("EndLeft").position - RoadPieces[1].transform.FindChild("BeginLeft").position;
+		RoadPieces[1].transform.Translate(Displacement, Space.World);
+
 
 		for (int i = 2; i < numPieces; i++) {
 			AddPiece ();
@@ -40,16 +45,25 @@ public class RoadManager : MonoBehaviour {
 			RoadPieces [0].transform.FindChild ("EndLeft").position).magnitude / 2;
 		RoadPieces[1].transform.Translate (0f, 0f, -halfLength, Space.World); 
 
+		SetCurrentPiece ();
 		// Get corner markers of current piece 
-		BeginLeft = RoadPieces[1].transform.FindChild("BeginLeft");
-		BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
-		EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
-		EndRight = RoadPieces[1].transform.FindChild("EndRight");
+		//BeginLeft = RoadPieces[1].transform.FindChild("BeginLeft");
+	//	BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
+		//EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
+	//EndRight = RoadPieces[1].transform.FindChild("EndRight");
 	}
 
 	// Update is called once per frame
 	void Update () {
-		RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
+
+		if (RoadPieces [1].tag == Tags.straightPiece) {
+			RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
+		} else {
+			RoadPieces [1].transform.RotateAround (RotationPoint, Vector3.up, -speed * Time.deltaTime);
+		}
+			
+
+		//RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
 		//RoadPieces [1].transform.Rotate (0f, 20f * Time.deltaTime, 0f, Space.World);
 
 		// Delete piece behind player and add to road; move Parents / Children up
@@ -65,10 +79,7 @@ public class RoadManager : MonoBehaviour {
 			}
 
 			// Get new references for coners of current piece 
-			BeginLeft = RoadPieces[1].transform.FindChild("BeginLeft");
-			BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
-			EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
-			EndRight = RoadPieces[1].transform.FindChild("EndRight");
+			SetCurrentPiece(); 
 		}
 	}
 
@@ -104,5 +115,41 @@ public class RoadManager : MonoBehaviour {
 		NewPiece.Translate (Displacement, Space.World);
 
 		NewPiece.parent = RoadPieces [1].transform; 
+	}
+
+	public Vector3 GetRotationPoint(Transform BeginLeft, Transform BeginRight, Transform EndLeft, Transform EndRight) {
+
+		// Compute edges from corner positions
+		Vector3 BeginEdge = BeginLeft.position - BeginRight.position; 
+		Vector3 EndEdge = EndLeft.position - EndRight.position; 
+
+		float a = Vector3.Dot (BeginEdge, BeginEdge); // square magnitude of begin edge 
+		float b = Vector3.Dot(BeginEdge, EndEdge); // project BeginEdge onto EndEdge
+		float e = Vector3.Dot(EndEdge,EndEdge); // square magnitude of end edge 
+
+		float d = a * e - b * b;
+
+		Vector3 r = BeginLeft.position - EndLeft.position; 
+		float c = Vector3.Dot (BeginEdge, r);
+		float f = Vector3.Dot (EndEdge, r); 
+
+		float s = (b * f - c * e) / d;
+		float t = (a * f - c * b) / d; 
+
+		Vector3 RotationPointBegin = BeginLeft.position + BeginEdge * s;
+		Vector3 RotationPointEnd = EndLeft.position + EndEdge * t; 
+
+		//return midpoint between two closest points
+		return (RotationPointBegin + RotationPointEnd) / 2f; 
+
+		}
+
+	void SetCurrentPiece() {
+		BeginLeft = RoadPieces[1].transform.FindChild("BeginLeft");
+		BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
+		EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
+		EndRight = RoadPieces[1].transform.FindChild("EndRight");
+
+		RotationPoint = GetRotationPoint (BeginLeft, BeginRight, EndLeft, EndRight); 
 	}
 }
