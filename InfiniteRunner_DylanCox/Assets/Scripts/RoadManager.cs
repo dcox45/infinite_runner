@@ -59,7 +59,10 @@ public class RoadManager : MonoBehaviour {
 		if (RoadPieces [1].tag == Tags.straightPiece) {
 			RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
 		} else {
-			RoadPieces [1].transform.RotateAround (RotationPoint, Vector3.up, -speed * Time.deltaTime);
+			float radius = Mathf.Abs(RotationPoint.x);
+			float angle = ((speed * Time.deltaTime) / radius) * Mathf.Sign(RoadPieces[1].transform.localScale.x) * Mathf.Rad2Deg;
+			RoadPieces[1].transform.RotateAround(RotationPoint, Vector3.up, angle);
+			//RoadPieces [1].transform.RotateAround (RotationPoint, Vector3.up, -speed * Time.deltaTime);
 		}
 			
 
