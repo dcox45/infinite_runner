@@ -56,34 +56,32 @@ public class RoadManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (RoadPieces [1].tag == Tags.straightPiece) {
-			RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
-		} else {
-			float radius = Mathf.Abs(RotationPoint.x);
-			float angle = ((speed * Time.deltaTime) / radius) * Mathf.Sign(RoadPieces[1].transform.localScale.x) * Mathf.Rad2Deg;
-			RoadPieces[1].transform.RotateAround(RotationPoint, Vector3.up, angle);
-			//RoadPieces [1].transform.RotateAround (RotationPoint, Vector3.up, -speed * Time.deltaTime);
-		}
-			
+		MovePiece (speed * Time.deltaTime);
 
-		//RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
-		//RoadPieces [1].transform.Rotate (0f, 20f * Time.deltaTime, 0f, Space.World);
+		if (EndLeft.position.z < 0f || EndRight.position.z < 0f) {
+			// Snap current piece to x-axis 
+			float resetDistance = GetResetDistance(); 
+			MovePiece (-resetDistance);
+
+			CyclePieces ();
+
+			MovePiece (resetDistance);
+
+			if (RoadPieces [1].tag == Tags.straightPiece) {
+				RoadPieces [1].transform.rotation = new Quaternion (RoadPieces [1].transform.rotation.x, 
+					0f,
+					0f,
+					RoadPieces [1].transform.rotation.w);
+
+				RoadPieces [1].transform.position = new Vector3 (0f, 0f, transform.position.z);
+			}
+		}
+
 
 		// Delete piece behind player and add to road; move Parents / Children up
 
-		if (EndLeft.position.z < 0f || EndRight.position.z < 0f) {
-			Destroy (RoadPieces [0]);
-			RoadPieces.RemoveAt (0);
-			AddPiece ();
 
-			for (int i = RoadPieces.Count - 1; i >= 0; i--) {
-				RoadPieces [i].transform.parent = null; 
-				RoadPieces [i].transform.parent = RoadPieces[1].transform;
-			}
 
-			// Get new references for coners of current piece 
-			SetCurrentPiece(); 
-		}
 	}
 
 	void AddPiece() {
@@ -155,4 +153,45 @@ public class RoadManager : MonoBehaviour {
 
 		RotationPoint = GetRotationPoint (BeginLeft, BeginRight, EndLeft, EndRight); 
 	}
+
+void MovePiece(float distance) {
+		if (RoadPieces [1].tag == Tags.straightPiece) {
+			RoadPieces [1].transform.Translate (0f, 0f, -distance, Space.World);
+		} else {
+			float radius = Mathf.Abs(RotationPoint.x);
+			float angle = (distance / radius) * Mathf.Sign(RoadPieces[1].transform.localScale.x) * Mathf.Rad2Deg;
+			RoadPieces[1].transform.RotateAround(RotationPoint, Vector3.up, angle);
+			//RoadPieces [1].transform.RotateAround (RotationPoint, Vector3.up, -speed * Time.deltaTime);
+		}
+	}
+
+	void CyclePieces() {
+		Destroy (RoadPieces [0]);
+		RoadPieces.RemoveAt (0);
+		AddPiece ();
+
+		for (int i = RoadPieces.Count - 1; i >= 0; i--) {
+			RoadPieces [i].transform.parent = null; 
+			RoadPieces [i].transform.parent = RoadPieces[1].transform;
+
+		}
+
+		SetCurrentPiece(); 
+
+		// Get new references for coners of current piece 
+	
+	}
+
+	float GetResetDistance() {
+		if (RoadPieces [1].tag == Tags.straightPiece) {
+			return -EndLeft.transform.position.z; 
+		} else {
+			Vector3 EndEdge = EndRight.position - EndLeft.position; 
+			float angle = Vector3.Angle (Vector3.right, EndEdge);
+			float radius = Mathf.Abs (RotationPoint.x);
+			return angle * Mathf.Deg2Rad * radius; // convert angle to radians and calculate angular velocity 
+		}
+	}
+
+
 }
