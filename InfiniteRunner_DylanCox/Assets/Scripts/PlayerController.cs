@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 
 	// lane variables
 	int currentLane = 0; 
+	int prevLane = 0;
 	float laneWidth;
 	Coroutine currentLaneChange;
 
@@ -55,10 +56,21 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void MovePlayer(int dir) {
-		currentLane = Mathf.Clamp (currentLane + dir, numLanes / -2, numLanes / 2);; 
-		if(currentLaneChange != null)
+
+		if (currentLaneChange != null) {
+			if (currentLane + dir != prevLane)
+				return;
+
 			StopCoroutine (currentLaneChange);
-		currentLaneChange = StartCoroutine(LaneChange());
+
+
+		}
+		prevLane = currentLane;
+		currentLane = Mathf.Clamp (currentLane + dir, numLanes / -2, numLanes / 2); 
+
+		currentLaneChange = StartCoroutine (LaneChange ());
+
+
 	}
 
 //	IEnumerator TestCoroutine() {
@@ -86,10 +98,10 @@ public class PlayerController : MonoBehaviour {
 
 	// Strafe movement coroutine
 	IEnumerator LaneChange(){
-		Vector3 From = transform.position;
+		Vector3 From = Vector3.right * prevLane * laneWidth;;
 		Vector3 To = Vector3.right * currentLane * laneWidth;  
 
-		float t = (laneWidth - Vector3.Distance (From, To)) / laneWidth;
+		float t = (laneWidth - Vector3.Distance (transform.position, To)) / laneWidth;
 		for (; t < 1f; t += strafeSpeed * Time.deltaTime / laneWidth) {
 			transform.position = Vector3.Lerp (From, To, t);
 			yield return null; 
