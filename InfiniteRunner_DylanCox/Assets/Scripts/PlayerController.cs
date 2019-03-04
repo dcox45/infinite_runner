@@ -89,7 +89,8 @@ public class PlayerController : MonoBehaviour {
 		Vector3 From = transform.position;
 		Vector3 To = Vector3.right * currentLane * laneWidth;  
 
-		for (float t = 0f; t < 1f; t += strafeSpeed * Time.deltaTime / laneWidth) {
+		float t = (laneWidth - Vector3.Distance (From, To)) / laneWidth;
+		for (; t < 1f; t += strafeSpeed * Time.deltaTime / laneWidth) {
 			transform.position = Vector3.Lerp (From, To, t);
 			yield return null; 
 		}
