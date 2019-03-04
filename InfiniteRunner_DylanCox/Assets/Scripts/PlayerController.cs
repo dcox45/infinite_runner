@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 
 	// lane variables
 	int currentLane = 0; 
+	int numLanes = 3;
 
 	//Input variables 
 	float hPrev = 0f; 
@@ -23,16 +24,14 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 
 		float hNew = Input.GetAxisRaw (InputNames.horzontalAxis); // returns -1, 0, or 1 with no smoothing
-		float hDelta = hNew = hPrev;
+		float hDelta = hNew - hPrev;
 		
-		if (!Mathf.Approximately (h, hNew) && !Mathf.Approximately(hNew, 0f)) {
+		if (Mathf.Abs (hDelta) > 0f && Mathf.Abs(hNew) > 0f) {
 			//Debug.Log ("Horizontal axis:  " + Input.GetAxis (InputNames.horzontalAxis)); 
 
-			h = hNew;
-
-
-
+			MovePlayer ((int)hNew);
 		}
+		hPrev = hNew;
 
 		// Jumping 
 		if (Input.GetButtonDown (InputNames.jumpButton)) {
@@ -44,6 +43,12 @@ public class PlayerController : MonoBehaviour {
 			Debug.Log("Slide Button Pressed)");
 		} 
 
+	}
+
+	void MovePlayer(int dir) {
+		currentLane = Mathf.Clamp (currentLane + dir, numLanes / -2, numLanes / 2);; 
+
+		transform.position = new Vector3(currentLane, 0f, 0f);
 	}
 
 }
