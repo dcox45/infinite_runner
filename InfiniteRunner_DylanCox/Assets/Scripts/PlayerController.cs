@@ -11,12 +11,14 @@ public class PlayerController : MonoBehaviour {
 	int prevLane = 0;
 	float laneWidth;
 	Coroutine currentLaneChange;
+	int laneChangeStack = 0;
 
 	[SerializeField]
 	int numLanes = 3;
 
 	//Input variables 
 	float hPrev = 0f; 
+	int dirBuffer = 0; 
 
 	[SerializeField]
 	float strafeSpeed = 5f; // speed of lane changing
@@ -58,10 +60,13 @@ public class PlayerController : MonoBehaviour {
 	void MovePlayer(int dir) {
 
 		if (currentLaneChange != null) {
-			if (currentLane + dir != prevLane)
+			if (currentLane + dir != prevLane) {
+				dirBuffer = dir;
 				return;
+			}
 
 			StopCoroutine (currentLaneChange);
+			dirBuffer = 0; 
 
 
 		}
@@ -109,6 +114,13 @@ public class PlayerController : MonoBehaviour {
 
 		transform.position = To;
 		currentLaneChange = null; 
+
+		if (dirBuffer != 0 && ++laneChangeStack < 2) {
+			MovePlayer (dirBuffer);
+			dirBuffer = 0;
+		}
+
+		laneChangeStack = 0;
 
 	}
 
