@@ -5,6 +5,7 @@ using UnityEngine;
 public class ObstacleSpawner : MonoBehaviour {
 	GameObject [] LoadedObstacles;
 
+
 	// Use this for initialization
 	void Start () {
 
@@ -15,6 +16,7 @@ public class ObstacleSpawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		
 		
 	}
 }
