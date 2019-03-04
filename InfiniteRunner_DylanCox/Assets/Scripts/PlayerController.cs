@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour {
 	void Awake () {
 
 		transform.position = Vector3.zero; //middle lane is always at origin 
+		StartCoroutine(TestCoroutine()); 
 		
 	}
 	
@@ -50,5 +51,29 @@ public class PlayerController : MonoBehaviour {
 
 		transform.position = new Vector3(currentLane, 0f, 0f);
 	}
+
+	IEnumerator TestCoroutine() {
+		
+		Debug.Log("wait for 2 seconds");
+		yield return new WaitForSeconds (2);  //resume from this point in 2 seconds in real time
+			
+		Debug.Log("Thanks!  3 more seconds");
+		yield return new WaitForSeconds (3);  //resume from this point in 2 seconds in real time
+
+		Debug.Log("Have some more Factorials: ");
+		for (int i = 2; i < 10; i++) {
+			int factorial = i; 
+			for (int j = i; j > 1; j--) {// this for loop finishes all in one frame 
+				factorial *= j; 
+			}
+
+			int frameCount = 2 - i;
+			Debug.Log("Frame" + frameCount + ": Factorial of " + i + " is " + factorial); 
+			yield return null; // resume from this point next frame
+		}
+
+		Debug.Log("TestCoroutine is done now.  Bye!"); 
+	}
+
 
 }
