@@ -4,20 +4,28 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	float h = 0f; 
+	//float h = 0f; 
 
 	// lane variables
 	int currentLane = 0; 
+	float laneWidth;
+	Coroutine currentLaneChange;
+
+	[SerializeField]
 	int numLanes = 3;
 
 	//Input variables 
 	float hPrev = 0f; 
 
+	[SerializeField]
+	float strafeSpeed = 5f; // speed of lane changing
+
 	// Use this for initialization
 	void Awake () {
 
 		transform.position = Vector3.zero; //middle lane is always at origin 
-		StartCoroutine(TestCoroutine()); 
+		laneWidth = 7.5f / numLanes;
+//		StartCoroutine(TestCoroutine()); 
 		
 	}
 	
@@ -48,31 +56,47 @@ public class PlayerController : MonoBehaviour {
 
 	void MovePlayer(int dir) {
 		currentLane = Mathf.Clamp (currentLane + dir, numLanes / -2, numLanes / 2);; 
-
-		transform.position = new Vector3(currentLane, 0f, 0f);
+		if(currentLaneChange != null)
+			StopCoroutine (currentLaneChange);
+		currentLaneChange = StartCoroutine(LaneChange());
 	}
 
-	IEnumerator TestCoroutine() {
-		
-		Debug.Log("wait for 2 seconds");
-		yield return new WaitForSeconds (2);  //resume from this point in 2 seconds in real time
-			
-		Debug.Log("Thanks!  3 more seconds");
-		yield return new WaitForSeconds (3);  //resume from this point in 2 seconds in real time
+//	IEnumerator TestCoroutine() {
+//		
+//		Debug.Log("wait for 2 seconds");
+//		yield return new WaitForSeconds (2);  //resume from this point in 2 seconds in real time
+//			
+//		Debug.Log("Thanks!  3 more seconds");
+//		yield return new WaitForSeconds (3);  //resume from this point in 2 seconds in real time
+//
+//		Debug.Log("Have some more Factorials: ");
+//		for (int i = 2; i < 10; i++) {
+//			int factorial = i; 
+//			for (int j = i; j > 1; j--) {// this for loop finishes all in one frame 
+//				factorial *= j; 
+//			}
+//
+//			int frameCount = 2 - i;
+//			Debug.Log("Frame" + frameCount + ": Factorial of " + i + " is " + factorial); 
+//			yield return null; // resume from this point next frame
+//		}
 
-		Debug.Log("Have some more Factorials: ");
-		for (int i = 2; i < 10; i++) {
-			int factorial = i; 
-			for (int j = i; j > 1; j--) {// this for loop finishes all in one frame 
-				factorial *= j; 
-			}
+//		Debug.Log("TestCoroutine is done now.  Bye!"); 
+//	}
 
-			int frameCount = 2 - i;
-			Debug.Log("Frame" + frameCount + ": Factorial of " + i + " is " + factorial); 
-			yield return null; // resume from this point next frame
+	// Strafe movement coroutine
+	IEnumerator LaneChange(){
+		Vector3 From = transform.position;
+		Vector3 To = Vector3.right * currentLane * laneWidth;  
+
+		for (float t = 0f; t < 1f; t += strafeSpeed * Time.deltaTime / laneWidth) {
+			transform.position = Vector3.Lerp (From, To, t);
+			yield return null; 
 		}
 
-		Debug.Log("TestCoroutine is done now.  Bye!"); 
+		transform.position = To;
+		currentLaneChange = null; 
+
 	}
 
 
