@@ -6,8 +6,16 @@ public class PlayerController : MonoBehaviour {
 
 	float h = 0f; 
 
+	// lane variables
+	int currentLane = 0; 
+
+	//Input variables 
+	float hPrev = 0f; 
+
 	// Use this for initialization
-	void Start () {
+	void Awake () {
+
+		transform.position = Vector3.zero; //middle lane is always at origin 
 		
 	}
 	
@@ -15,14 +23,10 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 
 		float hNew = Input.GetAxisRaw (InputNames.horzontalAxis); // returns -1, 0, or 1 with no smoothing
+		float hDelta = hNew = hPrev;
 		
 		if (!Mathf.Approximately (h, hNew) && !Mathf.Approximately(hNew, 0f)) {
 			//Debug.Log ("Horizontal axis:  " + Input.GetAxis (InputNames.horzontalAxis)); 
-			if (hNew < 0f) {
-				Debug.Log ("Left Input");
-			} else if (hNew > 0f) {
-				Debug.Log ("Right Input");
-			}
 
 			h = hNew;
 
