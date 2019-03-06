@@ -115,13 +115,14 @@ public class PlayerController : Singleton<PlayerController> {
 		Vector3 From = Vector3.right * prevLane * laneWidth;;
 		Vector3 To = Vector3.right * currentLane * laneWidth;  
 
-		float t = (laneWidth - Vector3.Distance (transform.position, To)) / laneWidth;
+		float t = (laneWidth - Vector3.Distance (transform.position.x * Vector3.right, To)) / laneWidth;
 		for (; t < 1f; t += strafeSpeed * Time.deltaTime / laneWidth) {
-			transform.position = Vector3.Lerp (From, To, t);
+			transform.position = Vector3.Lerp (From + Vector3.up * transform.position.y, 
+												To + Vector3.up * transform.position.y, t);
 			yield return null; 
 		}
 
-		transform.position = To;
+		transform.position = To + Vector3.up * transform.position.y;
 		currentLaneChange = null; 
 
 		if (dirBuffer != 0 && ++laneChangeStack < 2) {
