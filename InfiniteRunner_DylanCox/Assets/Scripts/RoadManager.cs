@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class RoadManager : MonoBehaviour {
+public class RoadManager : Singleton<RoadManager> {
 
 	GameObject[] LoadedPieces;
 	List<GameObject> RoadPieces;
@@ -11,6 +11,10 @@ public class RoadManager : MonoBehaviour {
 	Transform BeginLeft, BeginRight, EndLeft, EndRight;
 
 	Vector3 RotationPoint = Vector3.zero;
+
+	// Events
+	public delegate void AddPieceHandler(GameObject Piece); 
+	public event AddPieceHandler onAddPiece; 
 
 	[SerializeField]
 	int numPieces = 10; 
@@ -23,6 +27,10 @@ public class RoadManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		// Initialize OnAddPiece event to avoid bugs 
+		onAddPiece += x => {};  
+
 		LoadedPieces = Resources.LoadAll<GameObject>("RoadPieces");
 		RoadPieces = new List<GameObject> ();
 
@@ -115,7 +123,10 @@ public class RoadManager : MonoBehaviour {
 		Vector3 Displacement = EndLeft.position - BeginLeft.position;
 		NewPiece.Translate (Displacement, Space.World);
 
+		// Parent the current road piece to all other pieces 
 		NewPiece.parent = RoadPieces [1].transform; 
+
+		onAddPiece (NewPiece.gameObject);
 	}
 
 	public Vector3 GetRotationPoint(Transform BeginLeft, Transform BeginRight, Transform EndLeft, Transform EndRight) {
@@ -154,7 +165,7 @@ public class RoadManager : MonoBehaviour {
 		RotationPoint = GetRotationPoint (BeginLeft, BeginRight, EndLeft, EndRight); 
 	}
 
-void MovePiece(float distance) {
+	void MovePiece(float distance) {
 		if (RoadPieces [1].tag == Tags.straightPiece) {
 			RoadPieces [1].transform.Translate (0f, 0f, -distance, Space.World);
 		} else {

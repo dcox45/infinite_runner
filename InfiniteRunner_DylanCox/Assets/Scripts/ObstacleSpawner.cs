@@ -7,7 +7,7 @@ public class ObstacleSpawner : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
 		//load obstacle prefabs
 		LoadedObstacles = Resources.LoadAll<GameObject>("Obstacles");
@@ -15,8 +15,9 @@ public class ObstacleSpawner : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-		
+
+
+	void PlaceObstacles(GameObject Piece) {
+		Debug.Log ("New Piece added.  We should probably put some obstacles on it");
 	}
 }
