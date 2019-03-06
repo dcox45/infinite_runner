@@ -25,6 +25,13 @@ public class PlayerController : Singleton<PlayerController> {
 	[SerializeField]
 	float strafeSpeed = 5f; // speed of lane changing
 
+	// Jump parameters
+	[SerializeField]
+	float g = -9.81f;
+
+	[SerializeField]
+	float Vi = 5f; 
+
 	// Use this for initialization
 	void Awake () {
 
@@ -49,7 +56,7 @@ public class PlayerController : Singleton<PlayerController> {
 
 		// Jumping 
 		if (Input.GetButtonDown (InputNames.jumpButton)) {
-			Debug.Log ("Jump Button Pressed");
+			StartCoroutine(Jump());
 		}
 
 		// Sliding 
@@ -124,6 +131,21 @@ public class PlayerController : Singleton<PlayerController> {
 
 		laneChangeStack = 0;
 
+	}
+
+	// Jumping coroutine
+	IEnumerator Jump() { 
+		// Calculate total time of jump 
+		float tFinal = (Vi * 2f) / -g; 
+
+		for (float t = Time.deltaTime; t < tFinal; t += Time.deltaTime) {
+			float y = g * (t * t) / 2f + Vi * t;
+			Helpers.SetPositionY (transform, y);
+
+			yield return null;
+		}
+
+		Helpers.SetPositionY (transform, 0f);
 	}
 
 

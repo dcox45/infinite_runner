@@ -29,7 +29,7 @@ public class RoadManager : Singleton<RoadManager> {
 	void Start () {
 
 		// Initialize OnAddPiece event to avoid bugs 
-		onAddPiece += x => {};  
+		onAddPiece += x => { };  
 
 		LoadedPieces = Resources.LoadAll<GameObject>("RoadPieces");
 		RoadPieces = new List<GameObject> ();
@@ -37,7 +37,6 @@ public class RoadManager : Singleton<RoadManager> {
 		//Hard-code first two road pieces for consistent start of road 
 		RoadPieces.Add(Instantiate(Resources.Load("RoadPieces/" + firstPieceFilename)) as GameObject);
 		RoadPieces.Add(Instantiate(Resources.Load("RoadPieces/" + firstPieceFilename)) as GameObject);
-
 		Vector3 Displacement = RoadPieces[0].transform.FindChild("EndLeft").position - RoadPieces[1].transform.FindChild("BeginLeft").position;
 		RoadPieces[1].transform.Translate(Displacement, Space.World);
 
@@ -79,9 +78,9 @@ public class RoadManager : Singleton<RoadManager> {
 				RoadPieces [1].transform.rotation = new Quaternion (RoadPieces [1].transform.rotation.x, 
 					0f,
 					0f,
-					RoadPieces [1].transform.rotation.w);
+					RoadPieces[1].transform.rotation.w);
 
-				RoadPieces [1].transform.position = new Vector3 (0f, 0f, transform.position.z);
+				RoadPieces [1].transform.position = new Vector3 (0f, 0f, RoadPieces[1].transform.position.z);
 			}
 		}
 
@@ -167,7 +166,7 @@ public class RoadManager : Singleton<RoadManager> {
 
 	void MovePiece(float distance) {
 		if (RoadPieces [1].tag == Tags.straightPiece) {
-			RoadPieces [1].transform.Translate (0f, 0f, -distance, Space.World);
+			RoadPieces [1].transform.Translate (0f, 0f, -speed * Time.deltaTime, Space.World);
 		} else {
 			float radius = Mathf.Abs(RotationPoint.x);
 			float angle = (distance / radius) * Mathf.Sign(RoadPieces[1].transform.localScale.x) * Mathf.Rad2Deg;
@@ -181,6 +180,8 @@ public class RoadManager : Singleton<RoadManager> {
 		RoadPieces.RemoveAt (0);
 		AddPiece ();
 
+
+		//reparent all pieces 
 		for (int i = RoadPieces.Count - 1; i >= 0; i--) {
 			RoadPieces [i].transform.parent = null; 
 			RoadPieces [i].transform.parent = RoadPieces[1].transform;

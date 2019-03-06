@@ -10,7 +10,7 @@ public class ObstacleSpawner : MonoBehaviour {
 
 	// inspector parameters 
 	[SerializeField]
-	float distInterval = 30f; 
+	float distInterval = 35f; 
 
 	// Use this for initialization
 	void Awake () {
@@ -72,7 +72,7 @@ public class ObstacleSpawner : MonoBehaviour {
 			bool consecutive = false;
 			int prevIndex = -1; 
 
-			for (int i = PlayerController.Instance.numLanes / -2; i <= PlayerController.Instance.numLanes / 2; i++) {
+			for (int i = PlayerController.Instance.NumLanes / -2; i <= PlayerController.Instance.NumLanes / 2; i++) {
 				// Prevent 3 of the same obstacle in a row
 				int randomObstacle = Random.Range(0,3);
 				if (randomObstacle == prevIndex) {
@@ -84,12 +84,12 @@ public class ObstacleSpawner : MonoBehaviour {
 				} else { 
 					consecutive = false; 
 				}
+				prevIndex = randomObstacle;
 				// Instantiate obstacle prefab
-				GameObject Obstacle = Instantiate (LoadedObstacles [randomObstacle], ObstacleRow.transform.position,
-					ObstacleRow.transform.rotation, ObstacleRow.transform);
+				GameObject Obstacle = Instantiate(LoadedObstacles[randomObstacle], ObstacleRow.transform.position, ObstacleRow.transform.rotation, ObstacleRow.transform);
 
 				//Move into correct lane 
-				Obstacle.transform.Translate(Vector3.right * i * PlayerController.Instance.laneWidth, Space.Self);
+				Obstacle.transform.Translate(Vector3.right * i * PlayerController.Instance.LaneWidth, Space.Self);
 			}
 
 			 
