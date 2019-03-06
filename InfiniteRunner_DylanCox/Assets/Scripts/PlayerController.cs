@@ -9,12 +9,14 @@ public class PlayerController : Singleton<PlayerController> {
 	// lane variables
 	int currentLane = 0; 
 	int prevLane = 0;
-	float laneWidth;
+	public float laneWidth;
+	public float LaneWidth { get { return laneWidth; } }
 	Coroutine currentLaneChange;
 	int laneChangeStack = 0;
 
 	[SerializeField]
-	int numLanes = 3;
+	public int numLanes = 3;
+	public int NumLanes { get { return numLanes; } }
 
 	//Input variables 
 	float hPrev = 0f; 
