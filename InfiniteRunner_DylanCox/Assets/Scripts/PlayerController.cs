@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof(Animator))]
 public class PlayerController : Singleton<PlayerController> {
 
 	//float h = 0f; 
@@ -32,12 +33,22 @@ public class PlayerController : Singleton<PlayerController> {
 	[SerializeField]
 	float Vi = 5f; 
 
+	// Animation 
+	Animator anim; 
+	int jumpParam; 
+
 	// Use this for initialization
 	void Awake () {
 
 		transform.position = Vector3.zero; //middle lane is always at origin 
 		laneWidth = 7.5f / numLanes;
-//		StartCoroutine(TestCoroutine()); 
+//		StartCoroutine(TestCoroutine());
+
+		// Animation initialization 
+		anim = GetComponent<Animator>();
+		jumpParam = Animator.StringToHash ("Jump");
+
+		//Debug.Break();
 		
 	}
 	
@@ -136,6 +147,8 @@ public class PlayerController : Singleton<PlayerController> {
 
 	// Jumping coroutine
 	IEnumerator Jump() { 
+		// Jump Animation
+		anim.SetBool(jumpParam, true);
 		// Calculate total time of jump 
 		float tFinal = (Vi * 2f) / -g; 
 
@@ -147,6 +160,9 @@ public class PlayerController : Singleton<PlayerController> {
 		}
 
 		Helpers.SetPositionY (transform, 0f);
+
+		// Transition back to run
+		anim.SetBool(jumpParam, false); 
 	}
 
 

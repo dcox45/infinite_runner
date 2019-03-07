@@ -25,6 +25,9 @@ public class RoadManager : Singleton<RoadManager> {
 	[SerializeField]
 	float speed = 20f;
 
+	[SerializeField]
+	float roadHeight = -0.21f;
+
 	// Use this for initialization
 	void Start () {
 
@@ -50,7 +53,7 @@ public class RoadManager : Singleton<RoadManager> {
 		// Move road to pass first piece 
 		float halfLength = (RoadPieces [0].transform.FindChild ("BeginLeft").position -
 			RoadPieces [0].transform.FindChild ("EndLeft").position).magnitude / 2;
-		RoadPieces[1].transform.Translate (0f, 0f, -halfLength, Space.World); 
+		RoadPieces[1].transform.Translate (0f, roadHeight, -halfLength, Space.World); 
 
 		SetCurrentPiece ();
 		// Get corner markers of current piece 
@@ -80,7 +83,7 @@ public class RoadManager : Singleton<RoadManager> {
 					0f,
 					RoadPieces[1].transform.rotation.w);
 
-				RoadPieces [1].transform.position = new Vector3 (0f, 0f, RoadPieces[1].transform.position.z);
+				RoadPieces [1].transform.position = new Vector3 (0f, roadHeight, RoadPieces[1].transform.position.z);
 			}
 		}
 
