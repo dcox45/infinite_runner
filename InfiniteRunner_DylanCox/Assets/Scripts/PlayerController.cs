@@ -21,6 +21,7 @@ public class PlayerController : Singleton<PlayerController> {
 
 	//Input variables 
 	float hPrev = 0f; 
+	float vPrev = 0f;
 	int dirBuffer = 0; 
 
 	[SerializeField]
@@ -37,6 +38,16 @@ public class PlayerController : Singleton<PlayerController> {
 	Animator anim; 
 	int jumpParam; 
 	int slideParam; 
+
+	// States 
+	enum State {
+		Run = 0,
+		Jump,
+		Slide,
+		Count
+	}
+
+	State state = State.Run;
 
 	// Use this for initialization
 	void Awake () {
@@ -58,24 +69,35 @@ public class PlayerController : Singleton<PlayerController> {
 	void Update () {
 
 		float hNew = Input.GetAxisRaw (InputNames.horzontalAxis); // returns -1, 0, or 1 with no smoothing
+		float vNew = Input.GetAxisRaw(InputNames.verticalAxis);
 		float hDelta = hNew - hPrev;
+		float vDelta = vNew - vPrev;
 		
-		if (Mathf.Abs (hDelta) > 0f && Mathf.Abs(hNew) > 0f) {
+		if (Mathf.Abs (hDelta) > 0f && Mathf.Abs(hNew) > 0f && state == State.Run) {
 			//Debug.Log ("Horizontal axis:  " + Input.GetAxis (InputNames.horzontalAxis)); 
 
 			MovePlayer ((int)hNew);
 		}
-		hPrev = hNew;
+		int v = 0;
+		if (Mathf.Abs (vDelta) > 0f) {
+			v = (int)vNew;
+		}
+
 
 		// Jumping 
-		if (Input.GetButtonDown (InputNames.jumpButton)) {
+		if ((Input.GetButtonDown (InputNames.jumpButton ) || v==1) && state == State.Run) {
+			state = State.Jump;
 			StartCoroutine(Jump());
 		}
 
 		// Sliding 
-		if ( Input.GetButtonDown(InputNames.slideButton)) {
+		if (( Input.GetButtonDown(InputNames.slideButton ) | v == -1) && state == State.Run) {
+			state = State.Slide;
 			anim.SetTrigger (slideParam);
 		} 
+		hPrev = hNew;
+		vPrev = vNew;
+
 
 	}
 
@@ -171,6 +193,7 @@ public class PlayerController : Singleton<PlayerController> {
 
 		// Transition back to run
 		anim.SetBool(jumpParam, false);
+		state = State.Run; 
 
 		for (; t < tFinal; t += Time.deltaTime) { 
 			float y = g * (t * t) / 2f + Vi * t; 
@@ -180,6 +203,10 @@ public class PlayerController : Singleton<PlayerController> {
 			yield return null;
 		}
 		Helpers.SetPositionY (transform, 0f);
+	}
+
+	void FinishSlide() {
+		state = State.Run; 
 	}
 
 
