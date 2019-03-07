@@ -36,6 +36,7 @@ public class PlayerController : Singleton<PlayerController> {
 	// Animation 
 	Animator anim; 
 	int jumpParam; 
+	int slideParam; 
 
 	// Use this for initialization
 	void Awake () {
@@ -47,6 +48,7 @@ public class PlayerController : Singleton<PlayerController> {
 		// Animation initialization 
 		anim = GetComponent<Animator>();
 		jumpParam = Animator.StringToHash ("Jump");
+		slideParam = Animator.StringToHash ("Slide"); 
 
 		//Debug.Break();
 		
@@ -72,7 +74,7 @@ public class PlayerController : Singleton<PlayerController> {
 
 		// Sliding 
 		if ( Input.GetButtonDown(InputNames.slideButton)) {
-			Debug.Log("Slide Button Pressed)");
+			anim.SetTrigger (slideParam);
 		} 
 
 	}
@@ -147,12 +149,18 @@ public class PlayerController : Singleton<PlayerController> {
 
 	// Jumping coroutine
 	IEnumerator Jump() { 
-		// Jump Animation
+				// Jump Animation
 		anim.SetBool(jumpParam, true);
+
 		// Calculate total time of jump 
 		float tFinal = (Vi * 2f) / -g; 
 
-		for (float t = Time.deltaTime; t < tFinal; t += Time.deltaTime) {
+		// Calculate transition time 
+		float tLand = tFinal - 0.125f;
+
+		float t = Time.deltaTime;
+
+		for (;t < tLand; t += Time.deltaTime) {
 			float y = g * (t * t) / 2f + Vi * t;
 			Helpers.SetPositionY (transform, y);
 
@@ -162,7 +170,16 @@ public class PlayerController : Singleton<PlayerController> {
 		Helpers.SetPositionY (transform, 0f);
 
 		// Transition back to run
-		anim.SetBool(jumpParam, false); 
+		anim.SetBool(jumpParam, false);
+
+		for (; t < tFinal; t += Time.deltaTime) { 
+			float y = g * (t * t) / 2f + Vi * t; 
+			Helpers.SetPositionY (transform, y);
+
+
+			yield return null;
+		}
+		Helpers.SetPositionY (transform, 0f);
 	}
 
 
