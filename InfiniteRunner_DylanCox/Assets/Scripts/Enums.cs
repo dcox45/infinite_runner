@@ -1,4 +1,4 @@
-﻿	public enum Layer {
+﻿public enum Layer {
 		//Built-in Layers 
 		Default = 0, 
 		TransparentFX,
@@ -9,5 +9,5 @@
 		//User Layers
 		Player = 8,
 		Obstacle,
-	}
+
 }
