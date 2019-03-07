@@ -12,4 +12,7 @@ public static class Helpers {
 	public static void SetPositionZ(Transform t, float z) {
 		t.position = new Vector3 (t.position.x, t.position.y, z);
 	}
+	public static void SetScaleY(Transform t, float y) {
+		t.localScale = new Vector3 (t.localScale.x, y, t.localScale.z);
+	}
 }

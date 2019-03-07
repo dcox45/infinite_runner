@@ -87,9 +87,12 @@ public class ObstacleSpawner : MonoBehaviour {
 				prevIndex = randomObstacle;
 				// Instantiate obstacle prefab
 				GameObject Obstacle = Instantiate(LoadedObstacles[randomObstacle], ObstacleRow.transform.position, ObstacleRow.transform.rotation, ObstacleRow.transform);
+				if (Obstacle.tag == Tags.slideObstacle) {
+					Helpers.SetScaleY(Obstacle.transform, 1.6f);
+				}
 
 				//Move into correct lane 
-				Obstacle.transform.Translate(Vector3.right * i * PlayerController.Instance.LaneWidth, Space.Self);
+				Obstacle.transform.Translate(Vector3.right *i * PlayerController.Instance.LaneWidth, Space.Self);
 			}
 
 			 
