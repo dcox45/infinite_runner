@@ -30,6 +30,10 @@ public class CollisionManager : MonoBehaviour {
 	[SerializeField]
 	bool debugSpheres = false; 
 
+	// Obstacle collision event 
+	public delegate void ObstacleCollisionHandler(); 
+	public event ObstacleCollisionHandler OnObstacleCollision; 
+
 	class CollisionSphere {
 
 		public Vector3 offset;
@@ -73,6 +77,9 @@ public class CollisionManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		// Event Initialization 
+		OnObstacleCollision += ObstacleCollision;
 
 		// Get Player reference 
 		Player = GameObject.Find("Robot");
@@ -141,7 +148,7 @@ public class CollisionManager : MonoBehaviour {
 		}
 
 		if (collisions.Count > 0)
-			ObstacleCollision();
+			OnObstacleCollision();
 	}
 
 	int GetLayerMask(params int[]indices) {
