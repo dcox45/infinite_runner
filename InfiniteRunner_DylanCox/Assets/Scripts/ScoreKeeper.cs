@@ -117,6 +117,8 @@ public class ScoreKeeper : MonoBehaviour {
 				}
 			}
 			++curr;
+
+			// Shift leaderboard down for new entry
 		}
 	}
 
@@ -138,7 +140,7 @@ public class ScoreKeeper : MonoBehaviour {
 			string initials = loadedItemProperties [1];
 			ulong score = ulong.Parse (loadedItemProperties [2]);
 
-			entries [place - 1] = new LeaderboardEntry (initials, score);  
+			//entries [place - 1] = new LeaderboardEntry (initials, score);  
 		}
 	}
 
@@ -155,9 +157,9 @@ public class ScoreKeeper : MonoBehaviour {
 	}
 
 	public void Save() {
-		string[] data = new string[entries.Length];
-		for (int i = 0; i < entries.Length; i++) {
-			data [i] = "" + (i + 1) + ":" + entries [i].initials + ":" + entries [i].score;
+		string[] data = new string[leaderboard.entries.Length];
+		for (int i = 0; i < leaderboard.entries.Length; i++) {
+			data [i] = "" + (i + 1) + ":" + leaderboard.entries [i].initials + ":" + leaderboard.entries [i].score;
 		}
 		File.WriteAllLines (Application.dataPath + "/_data/leaderboard_data.sav", data);
 	}
