@@ -15,4 +15,8 @@ public static class Helpers {
 	public static void SetScaleY(Transform t, float y) {
 		t.localScale = new Vector3 (t.localScale.x, y, t.localScale.z);
 	}
+
+	public static int Mod(int x, int m) {
+		return (x % m + m) % m; 
+	}
 }

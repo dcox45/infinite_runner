@@ -8,12 +8,21 @@ using UnityEngine.SceneManagement;
 [RequireComponent (typeof(CollisionManager))]
 public class ScoreKeeper : MonoBehaviour {
 
-	public class Leaderboard {
+	class Leaderboard : ScriptableObject{
 
 		public const int numSlots = 8; 
 		public LeaderboardEntry[] entries;
 		int place = -1; // place of new high schore 
 		ulong score;
+
+		// Initials entry 
+		int currInitial = 0;
+		float blinkTimer = 0; 
+		float blinkTime = 0.3f;
+		char[] initialChars;
+		int currInitialChar = 0;
+		float vPrev = 0f;  //vertical input axis on previous frame;
+		
 
 		// UI 
 		public Transform Root;
@@ -34,6 +43,15 @@ public class ScoreKeeper : MonoBehaviour {
 
 		public Leaderboard(){
 			entries = new LeaderboardEntry[numSlots];
+
+			// Initialize initials characters 
+			initialChars = new char[26];
+			int index = 0; 
+			for (char c = 'A'; c <= 'Z'; c++) {
+				initialChars[index] = c;
+				++index; 
+			}
+
 			try {
 				Load();
 			}
@@ -87,7 +105,50 @@ public class ScoreKeeper : MonoBehaviour {
 		}
 
 		public void Update() {
-			
+			if (place < 0) {
+				//check for "any key" to reset game
+				if (Input.anyKeyDown) {
+					//reload level
+					GameManager.ResetLevel(); 
+				}
+			} else {
+				//initials input loop 
+				blinkTimer += Time.deltaTime;
+				if (blinkTimer >= blinkTime) {
+					blinkTimer -= blinkTime;
+
+					//toggle initial visibility 
+					ui_entries[place].initials[currInitial].enabled = !ui_entries[place].initials[currInitial].enabled;
+				}
+
+				float vNew = Input.GetAxisRaw ("Vertical"); 
+				float vDelta = vNew - vPrev;
+				if (Mathf.Abs (vDelta) > 0.3f && Mathf.Abs (vNew) >= 0.5f) {
+					// go to next/prev character
+					int dir = Mathf.RoundToInt(vNew);
+					currInitialChar = Helpers.Mod(currInitialChar + dir, initialChars.Length);
+					ui_entries [place].initials [currInitial].text = initialChars [currInitialChar].ToString ();
+				} 
+				else if (Input.anyKeyDown) {
+					string initials = "" +
+					                  (currInitial == 0 ? initialChars [currInitialChar] : entries [place].initials [0]) +
+					                  (currInitial == 1 ? initialChars [currInitialChar] : entries [place].initials [1]) +
+					                  (currInitial == 2 ? initialChars [currInitialChar] : entries [place].initials [2]);
+
+
+					entries [place].initials = initials; 
+
+					// move to next initial
+					if (++currInitial > 2) { 
+						//finished entering initials
+						currInitial = 0; 
+						place = -1;
+						Save ();
+						ui_ContextMessage.text = "PRESS ANY KEY";
+					}
+				}
+				vPrev = vNew; 
+			}
 		}
 
 		public void Load() { 
@@ -152,6 +213,11 @@ public class ScoreKeeper : MonoBehaviour {
 			this.place = place; 
 			this.score = score; 
 			entries [place] = new LeaderboardEntry ("AAA", score);
+		}
+
+		public void Close() {
+			Save ();
+			Root.gameObject.SetActive (false); 
 		}
 
 	}
@@ -234,10 +300,8 @@ public class ScoreKeeper : MonoBehaviour {
 			leaderboard.ui_ContextMessage.text = "YOU LOSE. PRESS ANY KEY";
 		}
 
+		// hide score 
 		ui_Score.enabled = false; 
-		PlayerController.Instance.gameObject.SetActive (false); 
-		GetComponent<RoadManager> ().enabled = false;
-		GetComponent<CollisionManager> ().enabled = false; 
 
 		// Display leaderboard
 		leaderboard.Display();
@@ -264,6 +328,13 @@ public class ScoreKeeper : MonoBehaviour {
 	public struct LeaderboardUIEntry {
 		public Text[] initials;
 		public Text Score;
+	}
+
+	public void CloseLeaderboard() {
+		leaderboard.Close ();
+
+		ui_Score.enabled = true;  
+		score = 0.0;
 	}
 }
 
