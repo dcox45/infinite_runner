@@ -209,5 +209,11 @@ public class PlayerController : Singleton<PlayerController> {
 		state = State.Run; 
 	}
 
+	public void Reset() {
+		gameObject.SetActive (true);
+		currentLane = 0; 
+		transform.position = Vector3.zero;
+	}
+
 
 }

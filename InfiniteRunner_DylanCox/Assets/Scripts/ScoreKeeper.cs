@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 [RequireComponent (typeof(CollisionManager))]
 public class ScoreKeeper : MonoBehaviour {
 
-	class Leaderboard : ScriptableObject{
+	public class Leaderboard : ScriptableObject{
 
 		public const int numSlots = 8; 
 		public LeaderboardEntry[] entries;
@@ -88,9 +88,11 @@ public class ScoreKeeper : MonoBehaviour {
 
 			// Get leaderboard parent
 			Root = canvas.FindChild ("ui_leaderboard");
+			//Debug.Log (Root.name);  
 
 			for (int i = 0; i < ui_entries.Length; i++) {
 				Transform EntryRoot = Root.FindChild ("entry_" + (i + 1));
+				//Debug.Log (EntryRoot.name);
 
 				// Initials text components
 				for (int j = 0; j < 3; j++) {
@@ -109,7 +111,7 @@ public class ScoreKeeper : MonoBehaviour {
 				//check for "any key" to reset game
 				if (Input.anyKeyDown) {
 					//reload level
-					GameManager.ResetLevel(); 
+					GameManager.Instance.ResetLevel(); 
 				}
 			} else {
 				//initials input loop 
@@ -153,11 +155,11 @@ public class ScoreKeeper : MonoBehaviour {
 
 		public void Load() { 
 			//load text save file
-			string[] loadedEntries = File.ReadAllLines(Application.dataPath + "/_data/leaderboard_data.sav");
+			string[] loadedItems = File.ReadAllLines(Application.dataPath + "/_data/leaderboard_data.sav");
 
-			for (int i = 0; i < loadedEntries.Length; i++) {
+			for (int i = 0; i < loadedItems.Length; i++) {
 				// Components of an entry are separated by ':' 
-				string[] loadedItemProperties = loadedEntries[i].Split(':');
+				string[] loadedItemProperties = loadedItems[i].Split(':');
 
 				// ==========================================
 				//LOADED ITEM PROPERTIES:
@@ -229,7 +231,7 @@ public class ScoreKeeper : MonoBehaviour {
 
 	// UI elements
 
-	public GameObject uiscore;
+	//public GameObject uiscore;
 	Text ui_Score;
 
 	[SerializeField]
@@ -248,10 +250,6 @@ public class ScoreKeeper : MonoBehaviour {
 
 		// Subscribe game reset code to obstacle collision event 
 		GetComponent<CollisionManager>().OnObstacleCollision += DisplayLeaderboard; 
-
-		//double d = double.MaxValue;
-		//Debug.Log("Double to int: " + (int)d);
-		//Debug.Log ("Double to ulong " + (ulong)d);
 
 		// Leaderboard initialization
 		leaderboard = new Leaderboard(); 
@@ -311,8 +309,10 @@ public class ScoreKeeper : MonoBehaviour {
 	void InitializeUI() {
 		Transform canvas = transform.FindChild ("Canvas");
 
+
 		leaderboard.InitializeUI (canvas);
 		ui_Score = canvas.FindChild ("ui_score").GetComponent<Text> (); 
+		//Debug.Log (ui_Score.name); 
 	}
 
 	public struct LeaderboardEntry {

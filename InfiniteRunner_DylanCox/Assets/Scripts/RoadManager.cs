@@ -208,5 +208,16 @@ public class RoadManager : Singleton<RoadManager> {
 		}
 	}
 
+	public void Reset() {
+		enabled = true; 
+
+		// Destroy road pieces 
+		Destroy(RoadPieces[1]);
+		RoadPieces.Clear();
+
+		// Generate new road 
+		Start(); 
+	}
+
 
 }
