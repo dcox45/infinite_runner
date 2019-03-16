@@ -91,7 +91,7 @@ public class PlayerController : Singleton<PlayerController> {
 		}
 
 		// Sliding 
-		if (( Input.GetButtonDown(InputNames.slideButton ) | v == -1) && state == State.Run) {
+		if (( Input.GetButtonDown(InputNames.slideButton ) || v == -1) && state == State.Run) {
 			state = State.Slide;
 			anim.SetTrigger (slideParam);
 		} 

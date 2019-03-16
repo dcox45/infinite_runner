@@ -87,22 +87,23 @@ public class ScoreKeeper : MonoBehaviour {
 			}
 
 			// Get leaderboard parent
-			Root = canvas.FindChild ("ui_leaderboard");
+			Root = canvas.Find ("ui_leaderboard");
 			//Debug.Log (Root.name);  
 
 			for (int i = 0; i < ui_entries.Length; i++) {
-				Transform EntryRoot = Root.FindChild ("entry_" + (i + 1));
+				Transform EntryRoot = Root.Find ("entry_" + (i + 1));
 				//Debug.Log (EntryRoot.name);
 
 				// Initials text components
 				for (int j = 0; j < 3; j++) {
 					//Debug.Log ("j loop " + j);
-					ui_entries [i].initials [j] = EntryRoot.FindChild ("initial_" + (j + 1)).GetComponent<Text> ();
+					ui_entries [i].initials [j] = EntryRoot.Find ("initial_" + (j + 1)).GetComponent<Text> ();
+					//Debug.Log(ui_entries[i].initials[j]);
 				}
 
-				ui_entries [i].Score = EntryRoot.FindChild ("score").GetComponent<Text> ();
+				ui_entries [i].Score = EntryRoot.Find ("score").GetComponent<Text> ();
 			}
-			ui_ContextMessage = Root.FindChild("ContextMessage").GetComponent<Text>();
+			ui_ContextMessage = Root.Find("ContextMessage").GetComponent<Text>();
 
 		}
 
@@ -231,8 +232,8 @@ public class ScoreKeeper : MonoBehaviour {
 
 	// UI elements
 
-	//public GameObject uiscore;
-	Text ui_Score;
+	public Text uiscore;
+	//Text ui_Score;
 
 	[SerializeField]
 	int scoreRate = 250; // Points per second
@@ -253,6 +254,7 @@ public class ScoreKeeper : MonoBehaviour {
 
 		// Leaderboard initialization
 		leaderboard = new Leaderboard(); 
+		//MyScriptableObjectClass asset = ScriptableObject.CreateInstance<MyScriptableObjectClass>();
 
 		InitializeUI ();
 	}
@@ -264,7 +266,7 @@ public class ScoreKeeper : MonoBehaviour {
 		} else {
 			score += Time.deltaTime * scoreRate;
 
-			ui_Score.text = "Score:  " + (ulong)score; 
+			uiscore.text = "Score:  " + (ulong)score; 
 		}
 
 
@@ -299,7 +301,7 @@ public class ScoreKeeper : MonoBehaviour {
 		}
 
 		// hide score 
-		ui_Score.enabled = false; 
+		uiscore.enabled = false; 
 
 		// Display leaderboard
 		leaderboard.Display();
@@ -307,11 +309,11 @@ public class ScoreKeeper : MonoBehaviour {
 
 
 	void InitializeUI() {
-		Transform canvas = transform.FindChild ("Canvas");
+		Transform canvas = transform.Find ("Canvas");
 
 
 		leaderboard.InitializeUI (canvas);
-		ui_Score = canvas.FindChild ("ui_score").GetComponent<Text> (); 
+		uiscore = canvas.Find ("ui_score").GetComponent<Text> (); 
 		//Debug.Log (ui_Score.name); 
 	}
 
@@ -333,7 +335,7 @@ public class ScoreKeeper : MonoBehaviour {
 	public void CloseLeaderboard() {
 		leaderboard.Close ();
 
-		ui_Score.enabled = true;  
+		uiscore.enabled = true;  
 		score = 0.0;
 	}
 }

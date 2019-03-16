@@ -27,10 +27,10 @@ public class ObstacleSpawner : MonoBehaviour {
 
 	void PlaceObstacles(GameObject Piece) {
 		
-		Transform BeginLeft = Piece.transform.FindChild("BeginLeft");
-		Transform BeginRight = Piece.transform.FindChild ("BeginRight");
-		Transform EndLeft = Piece.transform.FindChild ("EndLeft");
-		Transform EndRight = Piece.transform.FindChild ("EndRight"); 
+		Transform BeginLeft = Piece.transform.Find("BeginLeft");
+		Transform BeginRight = Piece.transform.Find ("BeginRight");
+		Transform EndLeft = Piece.transform.Find ("EndLeft");
+		Transform EndRight = Piece.transform.Find ("EndRight"); 
 
 		// Get new piece length 
 		float length; 

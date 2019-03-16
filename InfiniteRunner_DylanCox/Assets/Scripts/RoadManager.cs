@@ -40,7 +40,7 @@ public class RoadManager : Singleton<RoadManager> {
 		//Hard-code first two road pieces for consistent start of road 
 		RoadPieces.Add(Instantiate(Resources.Load("RoadPieces/" + firstPieceFilename)) as GameObject);
 		RoadPieces.Add(Instantiate(Resources.Load("RoadPieces/" + firstPieceFilename)) as GameObject);
-		Vector3 Displacement = RoadPieces[0].transform.FindChild("EndLeft").position - RoadPieces[1].transform.FindChild("BeginLeft").position;
+		Vector3 Displacement = RoadPieces[0].transform.Find("EndLeft").position - RoadPieces[1].transform.Find("BeginLeft").position;
 		RoadPieces[1].transform.Translate(Displacement, Space.World);
 
 
@@ -51,8 +51,8 @@ public class RoadManager : Singleton<RoadManager> {
 		RoadPieces [0].transform.parent = RoadPieces [1].transform;
 
 		// Move road to pass first piece 
-		float halfLength = (RoadPieces [0].transform.FindChild ("BeginLeft").position -
-			RoadPieces [0].transform.FindChild ("EndLeft").position).magnitude / 2;
+		float halfLength = (RoadPieces [0].transform.Find ("BeginLeft").position -
+			RoadPieces [0].transform.Find ("EndLeft").position).magnitude / 2;
 		RoadPieces[1].transform.Translate (0f, roadHeight, -halfLength, Space.World); 
 
 		SetCurrentPiece ();
@@ -106,10 +106,10 @@ public class RoadManager : Singleton<RoadManager> {
 		Transform PrevPiece = RoadPieces[RoadPieces.Count - 2].transform; 
 
 		// Get Positions of four corner GameObjects 
-		BeginLeft = NewPiece.FindChild("BeginLeft");  
-		EndLeft = PrevPiece.FindChild ("EndLeft");
-		BeginRight = NewPiece.FindChild ("BeginRight"); 
-		EndRight = PrevPiece.FindChild ("EndRight");
+		BeginLeft = NewPiece.Find("BeginLeft");  
+		EndLeft = PrevPiece.Find ("EndLeft");
+		BeginRight = NewPiece.Find ("BeginRight"); 
+		EndRight = PrevPiece.Find ("EndRight");
 
 		// Compute edges
 		Vector3 BeginEdge = BeginRight.position - BeginLeft.position;
@@ -159,10 +159,10 @@ public class RoadManager : Singleton<RoadManager> {
 		}
 
 	void SetCurrentPiece() {
-		BeginLeft = RoadPieces[1].transform.FindChild("BeginLeft");
-		BeginRight = RoadPieces[1].transform.FindChild("BeginRight");
-		EndLeft = RoadPieces[1].transform.FindChild("EndLeft");
-		EndRight = RoadPieces[1].transform.FindChild("EndRight");
+		BeginLeft = RoadPieces[1].transform.Find("BeginLeft");
+		BeginRight = RoadPieces[1].transform.Find("BeginRight");
+		EndLeft = RoadPieces[1].transform.Find("EndLeft");
+		EndRight = RoadPieces[1].transform.Find("EndRight");
 
 		RotationPoint = GetRotationPoint (BeginLeft, BeginRight, EndLeft, EndRight); 
 	}
