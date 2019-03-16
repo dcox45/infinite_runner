@@ -124,6 +124,7 @@ public class ScoreKeeper : MonoBehaviour {
 					ui_entries[place].initials[currInitial].enabled = !ui_entries[place].initials[currInitial].enabled;
 				}
 
+				// Vertical Input
 				float vNew = Input.GetAxisRaw ("Vertical"); 
 				float vDelta = vNew - vPrev;
 				if (Mathf.Abs (vDelta) > 0.3f && Mathf.Abs (vNew) >= 0.5f) {
@@ -133,6 +134,8 @@ public class ScoreKeeper : MonoBehaviour {
 					ui_entries [place].initials [currInitial].text = initialChars [currInitialChar].ToString ();
 				} 
 				else if (Input.anyKeyDown) {
+					ui_entries[place].initials[currInitial].enabled = true;
+
 					string initials = "" +
 					                  (currInitial == 0 ? initialChars [currInitialChar] : entries [place].initials [0]) +
 					                  (currInitial == 1 ? initialChars [currInitialChar] : entries [place].initials [1]) +

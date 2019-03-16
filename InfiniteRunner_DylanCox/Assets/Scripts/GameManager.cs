@@ -21,18 +21,21 @@ public class GameManager : Singleton<GameManager> {
 		
 	}
 
+
+	public void PauseGamePlay() {
+		pc.gameObject.SetActive (false);
+		rm.enabled = false;
+		cm.enabled = false;  
+	}
+
 	public void ResetLevel() {
 
 		sk.CloseLeaderboard ();
 		rm.Reset ();
 		pc.Reset ();
 		cm.enabled = true; 
+		//pc.gameObject.SetActive (true);
 
-	}
 
-	public void PauseGamePlay() {
-		pc.gameObject.SetActive (false);
-		rm.enabled = false;
-		cm.enabled = false;  
 	}
 }
