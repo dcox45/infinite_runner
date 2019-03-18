@@ -23,7 +23,6 @@ public class ScoreKeeper : MonoBehaviour {
 		int currInitialChar = 0;
 		float vPrev = 0f;  //vertical input axis on previous frame;
 		
-
 		// UI 
 		public Transform Root;
 		public LeaderboardUIEntry[] ui_entries;
@@ -38,7 +37,6 @@ public class ScoreKeeper : MonoBehaviour {
 			"6:BAD:120000",
 			"7:PLS:120000",
 			"8:NOP:120000",
-
 		};
 
 		public Leaderboard(){
@@ -78,10 +76,10 @@ public class ScoreKeeper : MonoBehaviour {
 			}
 		}
 
-
 		public void InitializeUI(Transform canvas) {
 			// Initialize entries 
 			ui_entries = new LeaderboardUIEntry[numSlots];
+
 			for (int i = 0; i < ui_entries.Length; i++) {
 				ui_entries [i].initials = new Text[3];
 			}
@@ -104,7 +102,6 @@ public class ScoreKeeper : MonoBehaviour {
 				ui_entries [i].Score = EntryRoot.Find ("score").GetComponent<Text> ();
 			}
 			ui_ContextMessage = Root.Find("ContextMessage").GetComponent<Text>();
-
 		}
 
 		public void Update() {
@@ -187,7 +184,6 @@ public class ScoreKeeper : MonoBehaviour {
 			File.WriteAllLines (Application.dataPath + "/_data/leaderboard_data.sav", data);
 		}
 
-
 		void Wipe() {
 			File.WriteAllLines (Application.dataPath + "/_data/leaderboard_data.sav", defaultLeaderboard); 
 
@@ -210,7 +206,6 @@ public class ScoreKeeper : MonoBehaviour {
 				for (int j = 0; j < 3; j++) {
 					ui_entries [i].initials [j].text = initials [j].ToString ();
 				}
-
 				ui_entries [i].Score.text = entries [i].score.ToString ();
 			}
 		}
@@ -268,13 +263,8 @@ public class ScoreKeeper : MonoBehaviour {
 			leaderboard.Update ();
 		} else {
 			score += Time.deltaTime * scoreRate;
-
 			uiscore.text = "Score:  " + (ulong)score; 
 		}
-
-
-
-
 	}
 
 	void DisplayLeaderboard(){
@@ -304,13 +294,12 @@ public class ScoreKeeper : MonoBehaviour {
 		}
 
 		// hide score 
-		uiscore.enabled = false; 
+		//uiscore.enabled = false; 
 
 		// Display leaderboard
 		leaderboard.Display();
 	}
-
-
+		
 	void InitializeUI() {
 		Transform canvas = transform.Find ("Canvas");
 
