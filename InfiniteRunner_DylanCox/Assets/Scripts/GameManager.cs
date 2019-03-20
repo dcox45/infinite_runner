@@ -32,10 +32,11 @@ public class GameManager : Singleton<GameManager> {
 
 		sk.CloseLeaderboard ();
 		rm.Reset ();
-		pc.Reset ();
+        pc.gameObject.SetActive(true);
+        pc.Reset ();
 		cm.enabled = true; 
-		//pc.gameObject.SetActive (true);
+		
 
 
-	}
+    }
 }
